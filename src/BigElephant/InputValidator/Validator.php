@@ -2,8 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationFactory as ValidationFactory;
+use Illuminate\Support\Contracts\MessageProviderInterface;
 
-abstract class Validator {
+abstract class Validator implements MessageProviderInterface {
 
 	protected $request;
 
@@ -112,5 +113,35 @@ abstract class Validator {
 		}
 
 		return $inputs;
+	}
+
+	/**
+	 * Get the message container for the validator.
+	 *
+	 * @return Illuminate\Support\MessageBag
+	 */
+	public function messages()
+	{
+		return $this->lastValidator()->messages;
+	}
+
+	/**
+	 * An alternative more semantic shortcut to the message container.
+	 *
+	 * @return Illuminate\Support\MessageBag
+	 */
+	public function errors()
+	{
+		return $this->messages();
+	}
+
+	/**
+	 * Get the messages for the instance.
+	 *
+	 * @return ILluminate\Support\MessageBag
+	 */
+	public function getMessageBag()
+	{
+		return $this->messages();
 	}
 }
