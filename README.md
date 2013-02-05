@@ -37,7 +37,7 @@ class SignupController extends BaseController {
 		// Note this might be done by people with 2 other options, Input::all() or Input::only(['everything', 'here'])
 
 		$rules = [
-			'email' => 		'required|'email',
+			'email' => 		'required|email',
 			'password' => 	'required|min:5|confirmed',
 
 			'first_name' => 'required',
