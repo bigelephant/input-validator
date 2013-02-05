@@ -15,7 +15,7 @@ class Factory {
 
 	protected $validators = array();
 
-	protected static $filterInputs = array();
+	protected $filterInputs = array();
 
 	public function __construct(Request $request, Factory $validatorFactory, Router $router)
 	{
@@ -77,14 +77,14 @@ class Factory {
 		static::$filterInputs[$name] = $input;
 	}
 
-	public static function input($name)
+	public function input($name)
 	{
-		if ( ! isset(static::$filterInputs[$name]))
+		if ( ! isset($this->$filterInputs[$name]))
 		{
 			return null;
 		}
 
-		return static::$filterInputs[$name];
+		return $this->$filterInputs[$name];
 	}
 
 	public function add($name, $validator, $filterFailResponse = null)
