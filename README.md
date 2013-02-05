@@ -210,6 +210,7 @@ class UserValidator extends BigElephant\InputValidator\Validator {
 		$this->add('email')->required()->email();
 	}
 }
+```
 
 With the above if the HTTP method is `PUT` or `PATCH` then when the validator is run the `username` input will be skipped completely as we are updating the user (if using your methods properly).
 Alternatively you can call `UserValidator::setUpdating` to true or false to skip or include values set to `noEdit`. For example you would set it to false when an admin is editing a user.
