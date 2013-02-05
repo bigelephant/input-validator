@@ -222,7 +222,8 @@ If you use `InputValidation::add(...)` you can define the third parameter as a r
 InputValidation::add('signup', 'SignupValidator', Redirect::back());
 ```
 
-By doing this a filter is automatically created called `validator.{name}`, so in this case `validator.signup`. Now our controller is even smaller:
+By doing this a filter is automatically created called `validator.{name}`, so in this case `validator.signup`. 
+Now our controller is even smaller, with the addition of getting our data a different way:
 ```php
 class SignupController extends BaseController {
 
@@ -233,7 +234,7 @@ class SignupController extends BaseController {
 
 	public function postIndex()
 	{
-		$user = new User($validator->getInput());
+		$user = new User(InputValidator::input('signup'));
 		$user->save();
 
 		return Redirect::to('something/pretty');
