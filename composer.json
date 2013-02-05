@@ -1,0 +1,24 @@
+{
+    "name": "bigelephant/input-validator",
+    "description": "",
+    "keywords": ["laravel"],
+    "authors": [
+        {
+            "name": "Robbo",
+            "email": "robert@mercenarydesign.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x",
+        "illuminate/validation": "4.0.x",
+        "illuminate/http": "4.0.x",
+        "bigelephant/laravel-rules": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "BigElephant\\InputValidator": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
