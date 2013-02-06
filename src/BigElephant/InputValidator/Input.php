@@ -19,9 +19,9 @@ class Input extends Rule {
 
 	public function ruleConfirmed()
 	{
-		$this->validator->add($this->getValue().'_confirmation');
+		$confirmed = $this->validator->add($this->getValue().'_confirmation')->hidden();
 
-		return parent::confirmed();
+		return parent::ruleConfirmed();
 	}
 
 	public function getValue()
@@ -37,16 +37,20 @@ class Input extends Rule {
 	public function hidden()
 	{
 		$this->hidden = true;
+
+		return $this;
 	}
 
 	public function noUpdate()
 	{
 		$this->updatable = false;
+
+		return $this;
 	}
 
 	public function noEdit()
 	{
-		$this->noUpdate();
+		return $this->noUpdate();
 	}
 
 	public function isHidden()

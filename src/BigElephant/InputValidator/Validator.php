@@ -45,6 +45,11 @@ abstract class Validator implements MessageProviderInterface {
 		$this->updating = $updating;
 	}
 
+	public function isUpdating()
+	{
+		return $this->updating;
+	}
+
 	public function check()
 	{
 		if ($this->preCheck() === false)
@@ -91,8 +96,7 @@ abstract class Validator implements MessageProviderInterface {
 			}
 		}
 
-		$inputs = $this->selectInput();
-		return isset($inputs[$input]) ? $inputs[$input] : null;
+		return isset($inputs[$input]) ? $input : null;
 	}
 
 	public function getInput($withHidden = true)
@@ -136,14 +140,11 @@ abstract class Validator implements MessageProviderInterface {
 	protected function selectInput($withHidden = true)
 	{
 		$inputs = $this->inputs;
-		if ($this->updating)
+		foreach ($inputs AS $k => $input)
 		{
-			foreach ($inputs AS $k => $input)
+			if (($this->updating AND ! $input->canUpdate()) OR (! $withHidden AND $input->isHidden()))
 			{
-				if ( ! $input->isUpdatable() OR (! $withHidden AND $input->isHidden()))
-				{
-					unset($inputs[$k]);
-				}
+				unset($inputs[$k]);
 			}
 		}
 
