@@ -30,7 +30,7 @@ class ValidatorServiceProvider extends ServiceProvider {
 	{
 		$this->app['input_validator'] = $this->app->share(function($app)
 		{
-			return new Factory($app['request'], $app['validator']);
+			return new Factory($app['request'], $app['validator'], $app['router']);
 		});
 	}
 

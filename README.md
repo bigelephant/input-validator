@@ -3,6 +3,8 @@ Laravel Input Validator
 
 This package is designed to abstract out input validation for your controllers and reduce repeated code.
 
+[![Build Status](https://secure.travis-ci.org/bigelephant/input-validator.png)](http://travis-ci.org/bigelephant/input-validator)
+
 ### TODO: install instructions when ready for use
 
 ## Examples
