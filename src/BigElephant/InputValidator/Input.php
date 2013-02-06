@@ -1,10 +1,10 @@
-<?php namespace InputValidator;
+<?php namespace BigElephant\InputValidator;
 
 use BigElephant\LaravelRules\Rule;
 
 class Input extends Rule {
 
-	protected $factory;
+	protected $validator;
 
 	protected $hidden = false;
 
@@ -12,19 +12,24 @@ class Input extends Rule {
 
 	protected $failMessage;
 
-	public function __construct(Factory $factory)
+	public function __construct(Validator $validator)
 	{
-		$this->factory = $factory;
+		$this->validator = $validator;
 	}
 
-	public function confirmed($rule)
+	public function ruleConfirmed()
 	{
-		$this->factory->add($rule.'_confirmation');
+		$this->validator->add($this->getValue().'_confirmation');
 
-		return parent::confirmed($rule);
+		return parent::confirmed();
 	}
 
-	public function hasRule()
+	public function getValue()
+	{
+		return $this->validator->get($this);
+	}
+
+	public function hasRules()
 	{
 		return ! empty($this->rules);
 	}
@@ -54,9 +59,14 @@ class Input extends Rule {
 		return $this->updatable;
 	}
 
-	public function fail($message)
+	public function fails($message)
 	{
 		$this->failMessage = $message;
+	}
+
+	public function hasFailMessage()
+	{
+		return ! is_null($this->failMessage);
 	}
 
 	public function getFailMessage()

@@ -1,7 +1,7 @@
 <?php namespace BigElephant\InputValidator;
 
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationFactory as ValidationFactory;
+use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 
 abstract class Validator implements MessageProviderInterface {
@@ -10,7 +10,7 @@ abstract class Validator implements MessageProviderInterface {
 
 	protected $validation;
 
-	protected $inputs;
+	protected $inputs = array();
 
 	protected $updating;
 
@@ -26,13 +26,18 @@ abstract class Validator implements MessageProviderInterface {
 		$this->defineInput();
 	}
 
+	protected function preCheck()
+	{
+
+	}
+
 	abstract protected function defineInput();
 
 	public function add($input)
 	{
-		$this->input[$input] = new Input($this);
+		$this->inputs[$input] = new Input($this);
 
-		return $this->input[$input];
+		return $this->inputs[$input];
 	}
 
 	public function setUpdating($updating)
@@ -42,7 +47,12 @@ abstract class Validator implements MessageProviderInterface {
 
 	public function check()
 	{
-		$this->lastValidator = $this->validation->make($this->getInput(), $this->getRules(), $this->getFailMessages());
+		if ($this->preCheck() === false)
+		{
+			return false;
+		}
+
+		$this->lastValidator = $this->validation->make($this->getInput(), $this->getRules(), $this->getFailedMessages());
 
 		if ($this->lastValidator->fails())
 		{
@@ -60,6 +70,31 @@ abstract class Validator implements MessageProviderInterface {
 		return ! $this->check();
 	}
 
+	public function get($input)
+	{
+		$inputs = $this->selectInput();
+
+		if ($input instanceof Input)
+		{
+			foreach ($inputs AS $name => $in)
+			{
+				if ($input === $in)
+				{
+					$input = $name;
+					break;
+				}
+			}
+
+			if ( ! is_string($input))
+			{
+				return null;
+			}
+		}
+
+		$inputs = $this->selectInput();
+		return isset($inputs[$input]) ? $inputs[$input] : null;
+	}
+
 	public function getInput($withHidden = true)
 	{
 		return $this->request->only(array_keys($this->selectInput($withHidden)));
@@ -70,7 +105,7 @@ abstract class Validator implements MessageProviderInterface {
 		$messages = array();
 		foreach ($this->selectInput() AS $k => $input)
 		{
-			if ($input->hasRule() AND $input->hasFailMessage())
+			if ($input->hasRules() AND $input->hasFailMessage())
 			{
 				$messages[$k] = $input->getFailMessage();
 			}
@@ -122,7 +157,7 @@ abstract class Validator implements MessageProviderInterface {
 	 */
 	public function messages()
 	{
-		return $this->lastValidator()->messages;
+		return $this->lastValidator()->messages();
 	}
 
 	/**

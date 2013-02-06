@@ -13,7 +13,11 @@
         "illuminate/support": "4.0.x",
         "illuminate/validation": "4.0.x",
         "illuminate/http": "4.0.x",
+        "illuminate/routing": "4.0.x",
         "bigelephant/laravel-rules": "dev-master"
+    },
+    "require-dev": {
+        "mockery/mockery": "0.7.2"
     },
     "autoload": {
         "psr-0": {

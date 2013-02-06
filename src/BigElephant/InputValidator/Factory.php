@@ -1,6 +1,6 @@
 <?php namespace BigElephant\InputValidator;
 
-use Illuminate\Validation\Factory;
+use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Closure;
@@ -17,7 +17,7 @@ class Factory {
 
 	protected $filterInputs = array();
 
-	public function __construct(Request $request, Factory $validatorFactory, Router $router)
+	public function __construct(Request $request, ValidationFactory $validatorFactory, Router $router)
 	{
 		$this->validatorFactory = $validatorFactory;
 		$this->request = $request;
@@ -28,12 +28,12 @@ class Factory {
 	{
 		if ($validator instanceof Closure)
 		{
-			$validator = new ClosureValidator($validator, $this->request, $this->validatorFactory);
+			$validator = new ClosureValidator($validator, $this->request, $this->validatorFactory, $this->router);
 
-			return array($validator->getInput(), $validator->getRules(), $validator->getMessages());
+			return array($validator->getInput(), $validator->getRules(), $validator->getFailedMessages());
 		}
 
-		if (is_string($validator))
+		if (is_string($validator) AND ! isset($this->validators[$validator]))
 		{
 			$this->add($validator, $validator);
 		}
@@ -59,7 +59,7 @@ class Factory {
 		}
 
 		$me = $this;
-		$this->router->filer('validator.'.$name, function() use ($me, $name, $response) 
+		$this->router->addFilter('validator.'.$name, function() use ($me, $name, $response) 
 		{
 			$validator = $me->make($name);
 
@@ -74,17 +74,17 @@ class Factory {
 
 	public function addFilterInput($name, array $input)
 	{
-		static::$filterInputs[$name] = $input;
+		$this->filterInputs[$name] = $input;
 	}
 
 	public function input($name)
 	{
-		if ( ! isset($this->$filterInputs[$name]))
+		if ( ! isset($this->filterInputs[$name]))
 		{
 			return null;
 		}
 
-		return $this->$filterInputs[$name];
+		return $this->filterInputs[$name];
 	}
 
 	public function add($name, $validator, $filterFailResponse = null)
