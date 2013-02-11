@@ -31,6 +31,10 @@ abstract class Validator implements MessageProviderInterface {
 
 	}
 
+	public function filterFailResponse()
+	{
+	}
+
 	abstract protected function defineInput();
 
 	public function add($input)

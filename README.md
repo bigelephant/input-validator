@@ -5,7 +5,28 @@ This package is designed to abstract out input validation for your controllers a
 
 [![Build Status](https://secure.travis-ci.org/bigelephant/input-validator.png)](http://travis-ci.org/bigelephant/input-validator)
 
-### TODO: install instructions when ready for use
+### Installation
+
+Add the following to the "require" section of your `composer.json` file:
+
+```json
+	"bigelephant/input-validator": "dev-master"
+```
+
+Edit the `app/config/app.php` file and...
+
+* Add the following to your `providers` array:
+
+```php
+	'BigElephant\InputValidator\ValidatorServiceProvider',
+```
+
+* Add the following to your `aliases` array:
+```php
+	'InputValidator' => 'BigElephant\InputValidator\ValidatorFacade',
+```
+
+## [Click here to skip down to the recommended usage](https://github.com/bigelephant/input-validator#example-validator-class-the-recommended-way)
 
 ## Examples
 
@@ -219,10 +240,28 @@ Alternatively you can call `UserValidator::setUpdating` to true or false to skip
 
 ### Example usage with filters
 I added a little feature to shorten the code even more, completely bypassing any validation in a controller. 
-If you use `InputValidation::add(...)` you can define the third parameter as a response like...
+If you use `InputValidation::add(...)` you can define the third parameter as a response, like the following:
 ```php
 InputValidation::add('signup', 'SignupValidator', Redirect::back());
 ```
+or you can fill out the `filterFailResponse` method of the specified validator for the same result. For example:
+```php
+class UserValidator extends BigElephant\InputValidator\Validator {
+	
+	protected function defineInputs()
+	{
+		$this->add('username')->required()->alphaDash()->noEdit();
+		$this->add('password')->required()->min(5)->hidden();
+
+		$this->add('email')->required()->email();
+	}
+
+	public function filterFailResponse()
+	{
+		return Redirect::back();
+	}
+}
+Note: with this you will still have the old input and any errors flushed into the session. 
 
 By doing this a filter is automatically created called `validator.{name}`, so in this case `validator.signup`. 
 Now our controller is even smaller, with the addition of getting our data a different way:
@@ -239,7 +278,8 @@ class SignupController extends BaseController {
 		$user = new User(InputValidator::input('signup'));
 		$user->save();
 
-		return Redirect::to('something/pretty');
+		return Redirect::to('success/something/pretty');
 	}
 }
 ```
+Here you will see the use of `InputValidator::input(...)`. This is used when we use filters, the usual `$input` array you get will instead be stored in the factory and you can access with `InputValidator::input('validator_name')`.

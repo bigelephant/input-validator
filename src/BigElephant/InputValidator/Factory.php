@@ -51,20 +51,30 @@ class Factory {
 		throw new \InvalidArgumentException('Invalid input validator.');
 	}
 
-	protected function addFilter($name, $response)
+	protected function addFilter($name, $response = null)
 	{
+		$validator = $this->make($name);
+
+		if ( ! $response)
+		{
+			$response = $validator->filterFailResponse();
+		}
+
 		if ($response === null)
 		{
 			return;
 		}
 
 		$me = $this;
-		$this->router->addFilter('validator.'.$name, function() use ($me, $name, $response) 
+		$this->router->addFilter('validator.'.$name, function() use ($validator, $me, $name, $response) 
 		{
-			$validator = $me->make($name);
-
 			if ($validator->fails())
 			{
+				if ($response instanceof Closure)
+				{
+					return call_user_func($response);
+				}
+
 				return $response;
 			}
 

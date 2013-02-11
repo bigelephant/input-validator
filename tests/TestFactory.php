@@ -66,7 +66,7 @@ class TestFactory extends PHPUnit_Framework_TestCase {
 	public function testAddFilter()
 	{
 		$router = m::mock('Illuminate\Routing\Router');
-		$router->shouldReceive('addFilter')->with('validator.login', m::type('Closure'));
+		$router->shouldReceive('addFilter')->once()->with('validator.login', m::type('Closure'));
 
 		$factory = new Factory(
 			$this->request,
@@ -75,6 +75,20 @@ class TestFactory extends PHPUnit_Framework_TestCase {
 		);
 
 		$factory->add('login', 'ValidatorStub', 'some response');
+	}
+
+	public function testAddFilterFromValidator()
+	{
+		$router = m::mock('Illuminate\Routing\Router');
+		$router->shouldReceive('addFilter')->once()->with('validator.login', m::type('Closure'));
+
+		$factory = new Factory(
+			$this->request,
+			m::mock('Illuminate\Validation\Factory'),
+			$router
+		);
+
+		$factory->add('login', 'ValidatorStub2');
 	}
 
 	public function testFilterGetInput()
@@ -114,4 +128,18 @@ class ValidatorStub extends Validator {
 		$this->add('email')->required()->email()->fails('email fail');
 		$this->add('password')->required()->min(5)->hidden();
 	}
+}
+
+class ValidatorStub2 extends Validator {
+
+	protected function defineInput()
+	{
+		$this->add('email')->required()->email()->fails('email fail');
+		$this->add('password')->required()->min(5)->hidden();
+	}
+
+	public function filterFailResponse()
+	{
+		return 'another response';
+	} 
 }
