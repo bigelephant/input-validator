@@ -130,7 +130,7 @@ abstract class Validator implements MessageProviderInterface {
 		if ($this->lastValidator->fails())
 		{
 			$this->request->getSessionStore()->flash('errors', $this->lastValidator->getMessageBag());
-			$this->request->flashOnly($this->getInput(false));
+			$this->request->flashOnly(array_keys($this->selectInput(false)));
 
 			return false;
 		}
