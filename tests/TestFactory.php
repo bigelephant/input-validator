@@ -17,10 +17,13 @@ class TestFactory extends PHPUnit_Framework_TestCase {
 			'password' => 'secret'
 		));
 
+		$router = m::mock('Illuminate\Routing\Router');
+		$router->shouldReceive('addFilter');
+
 		$this->factory = new Factory(
 			$this->request,
 			m::mock('Illuminate\Validation\Factory'),
-			m::mock('Illuminate\Routing\Router')
+			$router
 		);
 	}
 

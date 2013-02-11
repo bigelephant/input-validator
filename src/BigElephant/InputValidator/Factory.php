@@ -73,7 +73,7 @@ class Factory {
 
 		if (is_string($validator) AND ! isset($this->validators[$validator]))
 		{
-			$this->add($validator, $validator);
+			$this->validators[$validator] = $validator;
 		}
 
 		if (isset($this->validators[$validator]))
@@ -111,23 +111,18 @@ class Factory {
 	 */
 	protected function addFilter($name, $response = null)
 	{
-		$validator = $this->make($name);
-
-		if ( ! $response)
-		{
-			$response = $validator->filterFailResponse();
-		}
-
-		if ($response === null)
-		{
-			return;
-		}
-
 		$me = $this;
-		$this->router->addFilter('validator.'.$name, function() use ($validator, $me, $name, $response) 
+		$this->router->addFilter('validator.'.$name, function() use ($me, $name, $response) 
 		{
+			$validator = $me->make($name);
+
 			if ($validator->fails())
 			{
+				if (is_null($response))
+				{
+					$response = $validator->filterFailResponse();
+				}
+
 				if ($response instanceof Closure)
 				{
 					return call_user_func($response);
