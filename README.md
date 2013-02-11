@@ -26,7 +26,7 @@ Edit the `app/config/app.php` file and...
 	'InputValidator' => 'BigElephant\InputValidator\ValidatorFacade',
 ```
 
-## [Click here to skip down to the recommended usage](https://github.com/bigelephant/input-validator#example-validator-class-the-recommended-way)
+### [Click here to skip down to the recommended usage](https://github.com/bigelephant/input-validator#example-validator-class-the-recommended-way)
 
 ## Examples
 
@@ -261,6 +261,7 @@ class UserValidator extends BigElephant\InputValidator\Validator {
 		return Redirect::back();
 	}
 }
+```
 Note: with this you will still have the old input and any errors flushed into the session. 
 
 By doing this a filter is automatically created called `validator.{name}`, so in this case `validator.signup`. 
